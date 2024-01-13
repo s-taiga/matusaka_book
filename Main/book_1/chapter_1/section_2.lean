@@ -2,6 +2,8 @@ import Mathlib.Data.Set.Lattice
 
 open Set
 
+namespace chapter_1
+
 variable {S} (A B C D : Set S)
 
 section part_A
@@ -176,7 +178,7 @@ theorem exp_2_18' : ∀ i : I, C ⊆ A i → C ⊆ ⋂ j, A j := by sorry
 
 end part_F
 
-namespace exercise_1_1_2
+namespace exercise_1_2
 
 theorem ex_lemma_1 : A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C) := inter_distrib_left A B C
 theorem ex_lemma_2 : A ∪ (B ∩ C) = (A ∪ B) ∩ (A ∪ C) := union_distrib_left A B C
@@ -427,4 +429,6 @@ theorem ex_9 (A₁ A₂ B₁ B₂ : Set S) : A₁ ∆ A₂ = B₁ ∆ B₂ → A
     _ = A₁ ∆ A₁ ∆ (A₂ ∆ B₂) := by rw [ex_7_c, ← ex_7_c]
     _ = A₂ ∆ B₂ := by rw [ex_8_c, ex_7_a, ex_8_a]
 
-end exercise_1_1_2
+end exercise_1_2
+
+end chapter_1

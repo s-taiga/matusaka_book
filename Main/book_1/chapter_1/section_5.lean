@@ -2,6 +2,8 @@ import Main.book_1.chapter_1.section_4
 
 open Set Function Bool
 
+namespace chapter_1
+
 -- part_A, Bには特に何もなし
 
 section part_C
@@ -216,7 +218,7 @@ end part_E
 
 -- part_F には数式なし
 
-namespace exercise_1_1_5
+namespace exercise_1_5
 
 -- 1は実例系なので対象外、2~4は実施済み
 
@@ -461,4 +463,6 @@ def phi (f : A → B) : A' → B' := v ∘ f ∘ u
 
 end
 
-end exercise_1_1_5
+end exercise_1_5
+
+end chapter_1

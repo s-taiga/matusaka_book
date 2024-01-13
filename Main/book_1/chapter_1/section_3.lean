@@ -3,6 +3,8 @@ import Mathlib.Data.Finset.Card
 
 open Set
 
+namespace chapter_1
+
 variable {S} (A B C D : Set S)
 
 section part_A
@@ -115,7 +117,7 @@ theorem theorem_2 (f : A → Set B) (h : IsMap f) :
 
 end part_E
 
-namespace exercise_1_1_3
+namespace exercise_1_3
 
 theorem ex_1 (m n : ℕ) (A : Finset S) (B : Finset S) (ha : A.card = m) (hb : B.card = n) (Γs : Finset (A → Set B)):
     Γs.card = n ^ m := by
@@ -137,4 +139,6 @@ theorem ex_3 (Γ : A → Set B) : IsMap Γ ↔ D' Γ = univ ∧ ∀ (b b' : B), 
       sorry
   sorry
 
-end exercise_1_1_3
+end exercise_1_3
+
+end chapter_1

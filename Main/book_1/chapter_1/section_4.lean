@@ -5,6 +5,7 @@ import Mathlib.Data.Set.BoolIndicator
 
 open Set Function Bool
 
+namespace chapter_1
 
 section part_A
 
@@ -112,7 +113,7 @@ theorem exp_4_4' : f ⁻¹' (univ \ Q) = univ \ f ⁻¹' Q := by
   apply Subset.antisymm
   . intro a h
     simp only [mem_preimage] at h
-    rw [exercise_1_1_2.ex_3_a_3] at *
+    rw [exercise_1_2.ex_3_a_3] at *
     have ⟨hu, hnq⟩ := h
     rw [mem_compl_iff] at hnq
     exact ⟨hu, hnq⟩
@@ -273,7 +274,7 @@ section part_F
 
 end part_F
 
-namespace exercise_1_1_4
+namespace exercise_1_4
 
 variable {A B C} (f f': A → B) (g g': B → C)
 variable {P P₁ P₂ : Set A} {Q Q₁ Q₂ : Set B} {R : Set C}
@@ -326,7 +327,7 @@ theorem ex_5_c : Injective f → f '' univ \ f '' P = f '' (univ \ P) := by
   apply Subset.antisymm
   . exact exp_4_4 f
   . intro x h
-    rw [exercise_1_1_2.ex_3_a_3] at *
+    rw [exercise_1_2.ex_3_a_3] at *
     rw [image, image, mem_setOf] at *
     have ⟨a, ⟨hun, hpc⟩, h⟩ := h
     constructor
@@ -455,4 +456,6 @@ theorem ex_15_a : ∀ (A' B' : Set A) (x : A), (A' ∩ B').boolIndicator x ↔ (
 
 -- 16 ~ の有限集合関連は難しそうなのでスキップ
 
-end exercise_1_1_4
+end exercise_1_4
+
+end chapter_1
