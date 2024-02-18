@@ -150,7 +150,7 @@ def f' := codRestrict f (range f) (by simp)
 theorem theorem_7_a : Surjective f ↔ ∃ s : B → A, f ∘ s = id := by
   constructor
   . intro hsurf
-    rw [part_B_2 f] at hsurf
+    rw [part_B_2' f] at hsurf
     have ⟨s, hs⟩ : ∃ s : B → A, ∀ b : B, s b ∈ A' f b := by
       have : univ.pi (A' f) ≠ ∅ := by
         apply axiom_of_choice

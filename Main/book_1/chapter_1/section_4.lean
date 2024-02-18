@@ -139,20 +139,76 @@ end part_A
 
 section part_B
 
-variable {A B} (f : A → B)
+variable {A B : Type*} (f : A → B) (X : Set A) (Y : Set B)
 
-theorem part_B_1 : Surjective f ↔ f '' univ = univ := by
-  simp
-  exact range_iff_surjective.symm
+theorem part_B_1 : SurjOn f X univ ↔ univ = f '' X := by
+  rw [SurjOn]
+  constructor
+  . intro h
+    apply Subset.antisymm
+    exact h
+    apply subset_univ
+  intro h
+  rw [h]
 
-theorem part_B_2 : Surjective f ↔ ∀ b : B, f ⁻¹' {b} ≠ ∅ := by
+theorem part_B_2 : SurjOn f univ Y ↔ ∀ b ∈ Y, f ⁻¹' {b} ≠ ∅ := by
+  rw [SurjOn]
+  constructor
+  . intro h b hb
+    have ⟨x, _, hf⟩ := (mem_image f univ b).mp (h hb)
+    push_neg
+    apply preimage_singleton_nonempty.mpr
+    simp
+    use x
+  . intro h b hbY
+    have := h b hbY
+    push_neg at this
+    have := preimage_singleton_nonempty.mp this
+    simp at *
+    rcases this with ⟨x, hf⟩
+    use x
+
+theorem part_B_2' : Surjective f ↔ ∀ b : B, f ⁻¹' {b} ≠ ∅ := by
   rw [Surjective]
-  sorry
+  constructor
+  . intro h b
+    have ⟨a, hfa⟩ := h b
+    push_neg
+    apply preimage_singleton_nonempty.mpr
+    simp
+    use a
+  . intro h b
+    have := h b
+    push_neg at this
+    have := preimage_singleton_nonempty.mp this
+    simp at *
+    exact this
 
-theorem part_B_3 : Surjective f ↔ ∀ b : B, ∃ a : A, f a = b := by
+theorem part_B_3 : SurjOn f X Y ↔ ∀ b ∈ Y, ∃ a ∈ X, f a = b := by
+  constructor
+  . intro h b hb
+    push_neg at h
+    apply (mem_image f X b).mp
+    exact h hb
+  intro h b hb
+  apply (mem_image f X b).mpr
+  apply h b hb
+
+theorem part_B_3' : Surjective f ↔ ∀ b : B, ∃ a : A, f a = b := by
   rw [Surjective]
 
-theorem part_B_4 : Injective f ↔ ∀ a a' : A, a ≠ a' → f a ≠ f a' := by
+theorem part_B_4 : InjOn f X ↔ ∀ a ∈ X, ∀ a' ∈ X, a ≠ a' → f a ≠ f a' := by
+  constructor
+  . intro h a ha a' ha'
+    contrapose
+    push_neg
+    exact h ha ha'
+  . intro h a ha a' ha'
+    contrapose
+    push_neg
+    exact h a ha a' ha'
+
+theorem part_B_4' : Injective f ↔ ∀ a a' : A, a ≠ a' → f a ≠ f a' := by
   rw [Injective]
   simp
   constructor
@@ -180,11 +236,10 @@ example : Bijective f₁ := by
     ring
 
 -- 逆対応からの証明は難しそうなので以下の形式にする
-theorem theorem_4 : ∀ finv: B → A, LeftInverse finv f ∧ RightInverse finv f ↔ Bijective f := by
-  intro finv
+theorem theorem_4 : (∃ finv: B → A, LeftInverse finv f ∧ RightInverse finv f) ↔ Bijective f := by
   simp only [Function.RightInverse, LeftInverse, Bijective, Injective, Surjective]
   constructor
-  . rintro ⟨hlf, hrf⟩
+  . rintro ⟨finv, ⟨hlf, hrf⟩⟩
     constructor
     . intro a₁ a₂ hf
       calc
@@ -196,16 +251,31 @@ theorem theorem_4 : ∀ finv: B → A, LeftInverse finv f ∧ RightInverse finv 
       use finv b
       exact hrf b
   . rintro ⟨hin, hsur⟩
-    constructor
-    . intro a
-      sorry
-    . sorry
+    sorry
+
+theorem theorem_4' [Nonempty A] : (∃ finv: B → A, InvOn finv f X Y ∧ MapsTo f X Y ∧ MapsTo finv Y X) ↔ BijOn f X Y := by
+  constructor
+  . intro ⟨finv, ⟨hinv, hf, hfinv⟩⟩
+    apply InvOn.bijOn hinv hf hfinv
+  intro ⟨hmaps, hinj, hsur⟩
+  have := (part_B_3 f X Y).mp hsur
+  set finv := invFunOn f X with hfinv
+  use finv
+  constructor
+  . exact BijOn.invOn_invFunOn ⟨hmaps, hinj, hsur⟩
+  constructor
+  . exact hmaps
+  intro b hb
+  have ⟨h, _⟩ := invFunOn_pos (this b hb)
+  simp [*] at h
+  exact h
 
 end part_B
 
 section part_C
 
 variable {A B C D} (f : A → B) (g : B → C) (h : C → D)
+variable (X : Set A) (Y : Set B) (Z : Set C) (W : Set D)
 
 example : g ∘ f = λ a ↦ g (f a) := by
   rfl
@@ -219,6 +289,18 @@ theorem theorem_5_1 : Surjective f ∧ Surjective g → Surjective (g ∘ f) := 
   use a
   rw [hf, hg]
 
+theorem theorem_5_1' : SurjOn f X Y ∧ SurjOn g Y Z → SurjOn (g ∘ f) X Z := by
+  rintro ⟨hf, hg⟩
+  apply (part_B_3 (g ∘ f) X Z).mpr
+  intro c hc
+  have ⟨b, hb, hg⟩ := hg hc
+  have ⟨a, ha, hf⟩ := hf hb
+  use a
+  constructor
+  . exact ha
+  . dsimp
+    rw [hf, hg]
+
 theorem theorem_5_2 : Injective f ∧ Injective g → Injective (g ∘ f) := by
   rintro ⟨hf, hg⟩
   simp_all [Injective]
@@ -226,6 +308,12 @@ theorem theorem_5_2 : Injective f ∧ Injective g → Injective (g ∘ f) := by
   have := hg hgf
   have := hf this
   exact this
+
+theorem theorem_5_2' : InjOn f X ∧ InjOn g Y ∧ MapsTo f X Y → InjOn (g ∘ f) X := by
+  rintro ⟨hf, hg, hmapf⟩
+  intro a₁ ha₁ a₂ ha₂ hgf
+  have := hg (hmapf ha₁) (hmapf ha₂) hgf
+  exact hf ha₁ ha₂ this
 
 theorem theroem_5_3 : Bijective f ∧ Bijective g → Bijective (g ∘ f) := by
   rintro ⟨⟨hinf, hsurf⟩, ⟨hing, hsurg⟩⟩
